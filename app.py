@@ -10,7 +10,8 @@ app = Flask(__name__)
 cascade_face = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
 cascade_smile = cv2.CascadeClassifier('haarcascade_smile.xml')
 # Filter
-overlay = cv2.imread('overlays/sunglass.png', cv2.IMREAD_UNCHANGED)
+overlay = cv2.imread('overlays/rayban2.png', cv2.IMREAD_UNCHANGED)
+logo_overlay = cv2.imread('overlays/rayban_logo.png', cv2.IMREAD_UNCHANGED)
 reward_overlay = cv2.imread('overlays/you_donated_a_smile.png', cv2.IMREAD_UNCHANGED)
 
 camera = cap = cv2.VideoCapture(1)
@@ -20,8 +21,22 @@ def show_reward(reward_overlay, frame, x, y, w, h, relative_y = 0.6):
     reward_overlay_new_shape = (w, int((h_/w_)*int(w)))
     reward_overlay_resize = cv2.resize(reward_overlay, reward_overlay_new_shape)
     frame = cvzone.overlayPNG(frame, reward_overlay_resize, [x, y-int(relative_y*h)])
-
-
+    
+    
+def show_rayban_filter(logo_overlay, overlay, frame, x, y, w, h, relative_y = 0.07, logo_width = 256):
+    h_, w_, d_ = overlay.shape
+    h__, w__, d__ = logo_overlay.shape
+    # define shape
+    overlay_new_shape = (w, int((h_/w_) * int(w)))
+    logo_overlay_new_shape = (logo_width, int((h__/w__) * logo_width))
+    #reshape
+    overlay_resize = cv2.resize(overlay, overlay_new_shape)
+    logo_overlay_resize = cv2.resize(logo_overlay, logo_overlay_new_shape)
+    #add
+    frame = cvzone.overlayPNG(frame, overlay_resize, [x, y - int(relative_y * h)])
+    frame = cvzone.overlayPNG(frame, logo_overlay_resize, [20,20])
+    
+    
 def gen_frames(cascade_face, cascade_smile):  # generate frame by frame from camera
     # Initialise
     smile_time_threshold = 1 # how much time before the filter is shown
@@ -55,8 +70,7 @@ def gen_frames(cascade_face, cascade_smile):  # generate frame by frame from cam
         else:
             for (x, y, w, h) in faces:
                 #cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 2)
-                overlay_resize = cv2.resize(overlay, (w, h))
-                frame = cvzone.overlayPNG(frame, overlay_resize, [x,y])
+                show_rayban_filter(logo_overlay, overlay, frame, x, y, w, h)
                 if count_filter_time > reward_time_threshold * fps:
                     show_reward(reward_overlay, frame, x, y, w, h)
                 count_filter_time += 1
