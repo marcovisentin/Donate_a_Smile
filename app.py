@@ -32,6 +32,7 @@ def gen_frames(cascade_face, cascade_smile):  # generate frame by frame from cam
     waiting_for_smile = True 
     smile_memory = [] # keeps track of the smile/no smile for last three frames.
     length_smile_memory = 3 
+    fps = 30 #TODO: change 
     
     while True:
         successful_frame_read, frame = cap.read()
@@ -48,7 +49,7 @@ def gen_frames(cascade_face, cascade_smile):  # generate frame by frame from cam
             smile_memory = (smile_memory + [is_smiling])[-length_smile_memory:]
             # set time counted to zero if in non of the last three frames there was a smile
             count_smile_time = count_smile_time + 1 if any(smile_memory) else 0 
-            if count_smile_time == smile_time_threshold * cap.get(cv2.CAP_PROP_FPS):
+            if count_smile_time == smile_time_threshold * fps:
                 waiting_for_smile = False
                 count_smile_time = 0
         else:
@@ -56,10 +57,10 @@ def gen_frames(cascade_face, cascade_smile):  # generate frame by frame from cam
                 #cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 2)
                 overlay_resize = cv2.resize(overlay, (w, h))
                 frame = cvzone.overlayPNG(frame, overlay_resize, [x,y])
-                if count_filter_time > reward_time_threshold * cap.get(cv2.CAP_PROP_FPS):
+                if count_filter_time > reward_time_threshold * fps:
                     show_reward(reward_overlay, frame, x, y, w, h)
                 count_filter_time += 1
-                if count_filter_time == filter_time_threshold * cap.get(cv2.CAP_PROP_FPS):
+                if count_filter_time == filter_time_threshold * fps:
                     waiting_for_smile = True
                     count_filter_time = 0
                 

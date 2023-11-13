@@ -2,7 +2,14 @@ import cv2
 import mediapipe as mp
 import cvzone
 
-from utils import detect_smile
+def detect_smile(gray_frame, faces, cascade_smile):
+    smiles = []
+    for (x, y, w, h) in faces:
+        the_face = gray_frame[y:y+h, x:x+w] # get face bounding box
+        smiles = cascade_smile.detectMultiScale(the_face,scaleFactor=2, minNeighbors=35) # detect smile
+        for (x_, y_, w_, h_) in smiles:
+            cv2.rectangle(the_face, (x_, y_), (x_+w_, y_+h_), (0,255,0), 2) 
+    return len(smiles) > 0
 
 # Initialise variables and models
 smile_time_threshold = 1 # how much time before the filter is shown
@@ -31,7 +38,7 @@ while True:
     for (x, y, w, h) in faces:
         cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 2)
         the_face = frame[y:y+h, x:x+w] # get face bounding box
-        smiles = cascade_smile.detectMultiScale(the_face,scaleFactor=2, minNeighbors=35) # detect smile
+        smiles = cascade_smile.detectMultiScale(the_face,scaleFactor=2, minNeighbors=30) # detect smile
         for (x_, y_, w_, h_) in smiles:
             cv2.rectangle(the_face, (x_, y_), (x_+w_, y_+h_), (0,255,0), 2) 
 
