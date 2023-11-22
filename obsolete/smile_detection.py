@@ -38,7 +38,7 @@ while True:
     for (x, y, w, h) in faces:
         cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 2)
         the_face = frame[y:y+h, x:x+w] # get face bounding box
-        smiles = cascade_smile.detectMultiScale(the_face,scaleFactor=2, minNeighbors=30) # detect smile
+        smiles = cascade_smile.detectMultiScale(the_face,scaleFactor=2, minNeighbors=30, minSize=(32,64)) # detect smile
         for (x_, y_, w_, h_) in smiles:
             cv2.rectangle(the_face, (x_, y_), (x_+w_, y_+h_), (0,255,0), 2) 
 

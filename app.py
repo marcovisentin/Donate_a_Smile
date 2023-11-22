@@ -1,7 +1,6 @@
 from flask import Flask,request,render_template, Response
 import cv2
-import cvzone
-from utils import detect_smile
+from utils import detect_smile, overlayPNG
 
 app = Flask(__name__)
 
@@ -20,7 +19,7 @@ def show_reward(reward_overlay, frame, x, y, w, h, relative_y = 0.6):
     h_, w_, d_ = reward_overlay.shape
     reward_overlay_new_shape = (w, int((h_/w_)*int(w)))
     reward_overlay_resize = cv2.resize(reward_overlay, reward_overlay_new_shape)
-    frame = cvzone.overlayPNG(frame, reward_overlay_resize, [x, y-int(relative_y*h)])
+    frame = overlayPNG(frame, reward_overlay_resize, [x, y-int(relative_y*h)])
     
     
 def show_rayban_filter(logo_overlay, overlay, frame, x, y, w, h, relative_y = 0.07, logo_width = 256):
@@ -33,8 +32,8 @@ def show_rayban_filter(logo_overlay, overlay, frame, x, y, w, h, relative_y = 0.
     overlay_resize = cv2.resize(overlay, overlay_new_shape)
     logo_overlay_resize = cv2.resize(logo_overlay, logo_overlay_new_shape)
     #add
-    frame = cvzone.overlayPNG(frame, overlay_resize, [x, y - int(relative_y * h)])
-    frame = cvzone.overlayPNG(frame, logo_overlay_resize, [20,20])
+    frame = overlayPNG(frame, overlay_resize, [x, y - int(relative_y * h)])
+    frame = overlayPNG(frame, logo_overlay_resize, [20,20])
     
     
 def gen_frames(cascade_face, cascade_smile):  # generate frame by frame from camera

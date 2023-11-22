@@ -42,7 +42,7 @@ while True:
             #cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 2)
             overlay_resize = cv2.resize(overlay, (w, h))
             frame = cvzone.overlayPNG(frame, overlay_resize, [x,y])
-            frame = cvzone.overlayPNG(frame, )
+            frame = cvzone.overlayPNG(frame,)
             
     cv2.imshow('Snap Dude', frame)
     if cv2.waitKey(10) == ord('q'):
